@@ -1,17 +1,17 @@
 # SPI playground
 
-It's a simple expression executor, loading user defined functions with SPI.
+It's a simple expression interpreter, loading user defined functions with SPI.
 
 ## Usage
 
-1. clone the project: `git clone https://github.com/lotabout/java-spi-playground`
+1. clone the project: `git clone https://github.com/lotabout/java-spi-playground.git`
 2. build with maven(java 8): `mvn clean package`
 3. Run without extensions: `java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar`
 4. Run with extensions: `java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar provider/target`
 
 ## Example
 
-The program itself is a simple expression executor:
+The program itself is a simple expression interpreter:
 
 ```
 $ java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar provider/target
