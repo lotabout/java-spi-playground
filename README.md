@@ -15,22 +15,22 @@ The program itself is a simple expression interpreter:
 
 ```
 $ java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar provider/target
-> add jar /Users/jinzhouz/repos/java-spi-playground/provider/target/spi-provider-1.0-SNAPSHOT.jar
-> loading function: id
-> loading function: add
-> loading function: mul
-> loading function: concat
-> Please input expression(e.g. x = add(10, 20))
-> "exit" to quit
-x = id(10)
-> 10
-y = add(x, 20, 30)
-> 60
-z = mul(y, y, y)
-> 216000
-concat("z = ", z)
-> z = 216000
-exit
+add jar /Users/jinzhouz/repos/java-spi-playground/provider/target/spi-provider-1.0-SNAPSHOT.jar
+loading function: id
+loading function: add
+loading function: mul
+loading function: concat
+Please input expression(e.g. x = add(10, 20))
+"exit" to quit
+> x = id(10)
+10
+> y = add(x, 20, 30)
+60
+> z = mul(y, y, y)
+216000
+> concat("z = ", z)
+z = 216000
+> exit
 bye
 ```
 

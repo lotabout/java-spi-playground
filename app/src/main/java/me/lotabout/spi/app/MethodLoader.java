@@ -31,7 +31,7 @@ public class MethodLoader extends URLClassLoader {
   public synchronized void addJar(String jarName) throws MalformedURLException {
     File file = Paths.get(jarName).toFile();
     if (file.isFile() && jarName.endsWith(".jar")) {
-      System.out.println("> add jar " + jarName);
+      System.out.println("add jar " + jarName);
       addURL(Paths.get(jarName).toUri().toURL());
     }
   }

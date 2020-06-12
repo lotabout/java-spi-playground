@@ -33,10 +33,11 @@ public class Main {
     Map<String, Function> functionPool = loadFunctions();
     Map<String, Object> variablePool = new HashMap<>();
 
-    System.out.println("> Please input expression(e.g. x = add(10, 20))");
-    System.out.println("> \"exit\" to quit");
+    System.out.println("Please input expression(e.g. x = add(10, 20))");
+    System.out.println("\"exit\" to quit");
     Scanner sc = new Scanner(System.in);
     while (true) {
+      System.out.print("> ");
       String line = sc.nextLine();
 
       // statement: exit
@@ -52,7 +53,7 @@ public class Main {
         if (value != null) {
           System.out.println(value.toString());
         } else {
-          System.out.println("> variable not found");
+          System.out.println("variable not found");
         }
         continue;
       }
@@ -70,9 +71,9 @@ public class Main {
           if (variableName != null) {
             variablePool.put(variableName, value);
           }
-          System.out.println("> " + value.toString());
+          System.out.println(value.toString());
         } catch (Exception ex) {
-          System.out.println("> Error on execution: " + ex.getMessage());
+          System.out.println("Error on execution: " + ex.getMessage());
         }
       } else {
         System.out.println("could not handle script: " + line);
@@ -85,7 +86,7 @@ public class Main {
     Map<String, Function> functionPool = new HashMap<>();
     ServiceLoader<Function> loader = ServiceLoader.load(Function.class);
     for (Function func : loader) {
-      System.out.println("> loading function: " + func.name());
+      System.out.println("loading function: " + func.name());
       functionPool.put(func.name(), func);
     }
 
