@@ -16,6 +16,13 @@
   </modules>
 
   <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>me.lotabout</groupId>
+        <artifactId>spi-api</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
   </dependencyManagement>
 
 </project>

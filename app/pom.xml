@@ -14,6 +14,13 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
+  <dependencies>
+    <dependency>
+      <groupId>me.lotabout</groupId>
+      <artifactId>spi-api</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -24,6 +31,32 @@
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>me.lotabout.spi.app.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <Class-Path>./ext/</Class-Path>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
