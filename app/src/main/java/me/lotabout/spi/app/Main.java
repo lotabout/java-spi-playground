@@ -1,16 +1,15 @@
 package me.lotabout.spi.app;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.ServiceLoader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import me.lotabout.spi.api.Function;
+import me.lotabout.spi.api.FunctionFactory;
 
 public class Main {
   // variable = func(args, ...);
@@ -20,17 +19,8 @@ public class Main {
   private static final Pattern TOKEN_NUM = Pattern.compile("[0-9]+");
   private static final Pattern TOKEN_STR = Pattern.compile("\"([^\"]+)\"");
 
-  public static void main(String[] args) throws MalformedURLException {
-    // set classloader for additional methods
-    if (args.length > 0) {
-      MethodLoader loader = new MethodLoader();
-      for (String fileOrDirectory : args) {
-        loader.addJarOrDir(fileOrDirectory);
-      }
-      Thread.currentThread().setContextClassLoader(loader);
-    }
-
-    Map<String, Function> functionPool = loadFunctions();
+  public static void main(String[] args) {
+    Map<String, Function> functionPool = FunctionFactory.getRegistered();
     Map<String, Object> variablePool = new HashMap<>();
 
     System.out.println("Please input expression(e.g. x = add(10, 20))");
@@ -79,18 +69,6 @@ public class Main {
         System.out.println("could not handle script: " + line);
       }
     }
-  }
-
-  // use SPI to load functions
-  private static Map<String, Function> loadFunctions() {
-    Map<String, Function> functionPool = new HashMap<>();
-    ServiceLoader<Function> loader = ServiceLoader.load(Function.class);
-    for (Function func : loader) {
-      System.out.println("loading function: " + func.name());
-      functionPool.put(func.name(), func);
-    }
-
-    return functionPool;
   }
 
   // execute function and return result

@@ -1,17 +1,17 @@
-package me.lotabout.spi.app.builtin;
+package me.lotabout.app.provider;
 
 import java.util.List;
 import me.lotabout.spi.api.Function;
 
-public class FuncId implements Function {
+public class FuncAdd implements Function {
 
   @Override
   public String name() {
-    return "id";
+    return "add";
   }
 
   @Override
   public Object apply(List<Object> args) {
-    return args.get(0);
+    return args.stream().mapToLong(arg -> (Long) arg).sum();
   }
 }

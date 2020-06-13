@@ -1,25 +1,23 @@
 # SPI playground
 
-It's a simple expression interpreter, loading user defined functions with SPI.
+It's a simple expression interpreter, loading user defined functions with SPI + Java 9.
 
 ## Usage
 
 1. clone the project: `git clone https://github.com/lotabout/java-spi-playground.git`
-2. build with maven(java 8): `mvn clean package`
-3. Run without extensions: `java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar`
-4. Run with extensions: `java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar provider/target`
+2. build with maven(java 9): `mvn clean package`
+3. Run with extensions: `java -p $(find . -name "*.jar"|tr '\n' ':') -m me.lotabout.spi.app/me.lotabout.spi.app.Main`
 
 ## Example
 
 The program itself is a simple expression interpreter:
 
 ```
-$ java -jar app/target/spi-app-1.0-SNAPSHOT-jar-with-dependencies.jar provider/target
-add jar /Users/jinzhouz/repos/java-spi-playground/provider/target/spi-provider-1.0-SNAPSHOT.jar
-loading function: id
-loading function: add
+$ java -p $(find . -name "*.jar"|tr '\n' ':') -m me.lotabout.spi.app/me.lotabout.spi.app.Main
 loading function: mul
+loading function: add
 loading function: concat
+loading function: id
 Please input expression(e.g. x = add(10, 20))
 "exit" to quit
 > x = id(10)
@@ -36,27 +34,17 @@ bye
 
 ## Technical Detail
 
-### Extension Functions are Loaded via SPI
+### Extensions are Loaded by ServiceLoader at Runtime
 
-1. We define the interface `Function`
-2. Use `ServiceLoader` to load all "implementations" of `Function`.
-3. The implementations should register themselves by:
-    a. creating a directory `META-INF/services`
-    b. creating a file indicating the interface they implement: `me.lotabout.spi.api.Function`
-    b. write the full qualified name of the implementation into the file:
-        ```
-        me.lotabout.app.provider.FuncMul
-        me.lotabout.app.provider.FuncConcat
-        ```
-
-The method to load all functions:
+With the interface `Function` defined, we could ask Java to load all
+(registered) implementations at runtime:
 
 ```java
-private static Map<String, Function> loadFunctions() {
+public static Map<String, Function> getRegistered() {
   Map<String, Function> functionPool = new HashMap<>();
   ServiceLoader<Function> loader = ServiceLoader.load(Function.class);
   for (Function func : loader) {
-    System.out.println("> loading function: " + func.name());
+    System.out.println("loading function: " + func.name());
     functionPool.put(func.name(), func);
   }
 
@@ -64,44 +52,33 @@ private static Map<String, Function> loadFunctions() {
 }
 ```
 
-### Hack ClassLoader to Load Extensions
+### `uses`
 
-We want to run our application via `java -jar xxx.jar` yet load our
-extensions(the `provider` submodule) easily.
-
-Our customized ClassLoader `MethodLoader` is used to scan a directory and load
-additional (extensions) jars.
+In the service consumer module, we need to declare the interface(service)
+whose implementations we'd like to load:
 
 ```java
-public synchronized void addJarOrDir(String jarName) throws MalformedURLException {
-  File file = Paths.get(jarName).toFile();
-  if (file.isDirectory()) {
-    for (File jar : Objects.requireNonNull(file.listFiles())) {
-      addJarOrDir(jar.getAbsolutePath());
-    }
-  } else {
-    addJar(jarName);
-  }
-}
-
-public synchronized void addJar(String jarName) throws MalformedURLException {
-  File file = Paths.get(jarName).toFile();
-  if (file.isFile() && jarName.endsWith(".jar")) {
-    System.out.println("> add jar " + jarName);
-    addURL(Paths.get(jarName).toUri().toURL());
-  }
+module me.lotabout.spi.api {
+  exports me.lotabout.spi.api;
+  uses me.lotabout.spi.api.Function;
 }
 ```
 
-Another important thing is we need to set it as ContextLoader so that all our
-extension functions could be loaded correctly.
+### register implementations via `provides`
+
+In the implementation module, we need declare our implementations via
+`provides`:
 
 ```java
-MethodLoader loader = new MethodLoader();
-for (String fileOrDirectory : args) {
-  loader.addJarOrDir(fileOrDirectory);
+module me.lotabout.spi.provider {
+  requires me.lotabout.spi.api;
+
+  provides me.lotabout.spi.api.Function with
+      me.lotabout.app.provider.FuncMul,
+      me.lotabout.app.provider.FuncAdd,
+      me.lotabout.app.provider.FuncConcat,
+      me.lotabout.app.provider.FuncId;
 }
-Thread.currentThread().setContextClassLoader(loader);
 ```
 
 That's it.
