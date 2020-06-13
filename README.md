@@ -2,6 +2,8 @@
 
 It's a simple expression interpreter, loading user defined functions with SPI.
 
+Checkout [Java 9 version](https://github.com/lotabout/java-spi-playground/tree/module) with its module system.
+
 ## Usage
 
 1. clone the project: `git clone https://github.com/lotabout/java-spi-playground.git`
